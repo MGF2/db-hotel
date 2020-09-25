@@ -1,0 +1,65 @@
+1) Conta gli ospiti raggruppandoli per anno di nascita
+
+   SELECT COUNT(id) 
+   FROM `ospiti` 
+   GROUP BY YEAR(ospiti.date_of_birth);
+
+2) Somma i prezzi dei pagamenti raggruppandoli per status
+
+   SELECT SUM(pagamenti.price) , pagamenti.status 
+   FROM `pagamenti` 
+   GROUP BY pagamenti.status;
+
+3) Conta quante volte è stata prenotata ogni stanza
+
+   SELECT COUNT(prenotazioni.id), stanze.room_number 
+   FROM `prenotazioni` 
+   INNER JOIN `stanze` 
+   ON stanze.id = prenotazioni.stanza_id 
+   GROUP BY prenotazioni.stanza_id;
+
+4) Stampare tutti gli ospiti per ogni prenotazione
+
+   SELECT ospiti.name, ospiti.lastname, prenotazioni.id, stanze.room_number, prenotazioni.created_at 
+   FROM `ospiti` 
+   INNER JOIN `prenotazioni_has_ospiti` 
+   ON ospiti.id = prenotazioni_has_ospiti.ospite_id 
+   INNER JOIN `prenotazioni` 
+   ON prenotazioni.id = prenotazioni_has_ospiti.prenotazione_id 
+   INNER JOIN `stanze` 
+   ON stanze.id = prenotazioni.stanza_id;
+
+5) Stampare Nome, Cognome, Prezzo e Pagante (+ stato pagamento) per tutte le prenotazioni fatte a Maggio 2018
+
+   SELECT ospiti.name, ospiti.lastname, pagamenti.price, paganti.name, paganti.lastname, prenotazioni.created_at, pagamenti.status
+   FROM `ospiti`
+   INNER JOIN `prenotazioni_has_ospiti`
+   ON ospiti.id = prenotazioni_has_ospiti.ospite_id 
+   INNER JOIN `prenotazioni`
+   ON prenotazioni.id = prenotazioni_has_ospiti.prenotazione_id
+   INNER JOIN `pagamenti`
+   ON pagamenti.prenotazione_id = prenotazioni.id
+   INNER JOIN `paganti`
+   ON paganti.id = pagamenti.pagante_id
+   WHERE prenotazioni.created_at BETWEEN '2018-05-01' AND '2018-05-31';
+
+6) Fai la somma di tutti i prezzi delle prenotazioni per le stanze del
+   primo piano
+
+   SELECT SUM(pagamenti.price)
+   FROM `stanze` 
+   INNER JOIN `prenotazioni`
+   ON stanze.id = prenotazioni.stanza_id
+   INNER JOIN `pagamenti`
+   ON prenotazioni.id = pagamenti.prenotazione_id
+   WHERE stanze.floor = 1;
+
+7) Prendi i dati di fatturazione per la prenotazione con id=7
+
+   SELECT paganti.name, paganti.lastname, paganti.address, pagamenti.price
+   FROM `prenotazioni`
+   INNER JOIN `pagamenti`
+   ON prenotazioni.id = pagamenti.prenotazione_id
+   INNER JOIN `paganti`
+   ON paganti.id = pagamenti.pagante_id 
+   WHERE prenotazioni.id = 7;
