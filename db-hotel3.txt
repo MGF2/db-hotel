@@ -1,0 +1,34 @@
+1. Fai un'analisi per vedere se ci sono ore in cui le prenotazioni sono più frequenti.
+
+   SELECT COUNT(`id`), HOUR(`created_at`)
+   FROM `prenotazioni`
+   GROUP BY HOUR(`created_at`);
+
+   Maggiore frequenza prenotazioni tra le 03:00 e le 03:59 e tra le 21:00 e le 21:59 (4)
+   Frequenza massima nella fascia serale tra le 21:00 e le 23:59 (10)
+   
+
+2. Le stanze sono state tutte prenotate almeno una volta? (Visualizzare le stanze non ancora prenotate)
+
+   SELECT stanze.room_number, prenotazioni.id, prenotazioni.stanza_id
+   FROM `stanze`
+   LEFT JOIN `prenotazioni`
+   ON stanze.id = prenotazioni.stanza_id
+   WHERE prenotazioni.stanza_id IS NULL
+
+   La stanza 101 non è ancora stata prenotata
+
+3. Come si chiamano gli ospiti che hanno fatto più di due prenotazioni?
+   
+   SELECT COUNT(prenotazioni_has_ospiti.prenotazione_id), ospiti.name, ospiti.lastname
+   FROM `ospiti`
+   INNER JOIN `prenotazioni_has_ospiti`
+   ON ospiti.id = prenotazioni_has_ospiti.ospite_id
+   INNER JOIN `prenotazioni`
+   ON prenotazioni.id = prenotazioni_has_ospiti.prenotazione_id
+   GROUP BY ospiti.id
+   HAVING COUNT(prenotazioni_has_ospiti.prenotazione_id) > 2;
+
+
+
+
